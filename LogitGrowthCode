@@ -1,0 +1,52 @@
+import pandas as pd
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+
+data = pd.read_excel('China_population.xls')
+t=data.iloc[:,0]
+t=np.array(t)
+t_train = t[0:30]
+t_other = t[30:]
+P=data.iloc[:,1]
+P=np.array(P)
+
+
+P0= P[30]
+global P0
+
+
+def logistic_increase_function(t,K,r):
+    # t:time t0:initial time P0:initial_value K:capacity r:increase_rate
+    exp_value=np.exp(r*(t-t[0]))
+    return (K*exp_value*P0)/(K+(exp_value-1)*P0)
+
+
+# 用最小二乘法估计拟合
+# popt, pcov = curve_fit(logistic_increase_function, t, P, p0=[300000,0.03])
+
+#获取popt里面是拟合系数
+print("K:capacity r:increase_rate t:time")
+print(popt)
+
+#拟合后预测的P值
+# P_predict = logistic_increase_function(t_train,popt[0],popt[1])
+
+#未来预测
+# future_predict=logistic_increase_function(t_other,popt[0],popt[1])
+
+future_predict=logistic_increase_function(t_other,151555,0.0491172)
+
+#绘图
+plot1 = plt.plot(t, P, 's',label="real number of China population")
+# plot2 = plt.plot(t_train, P_predict, 'r',label='predicted number of population in train set')
+plot3 = plt.plot(t_other, future_predict, 'b',label='predicted populatio in other set')
+plt.xlabel('time')
+plt.ylabel('Chian population')
+plt.legend(loc=0) #指定legend的位置右下角
+# print(logistic_increase_function(np.array(28),popt[0],popt[1]))
+# print(logistic_increase_function(np.array(29),popt[0],popt[1]))
+plt.show()
+
+print(np.diff(future_predict))
